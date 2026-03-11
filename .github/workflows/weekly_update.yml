@@ -8,6 +8,8 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write        # 允许 github-actions[bot] 推送提交
     steps:
       - uses: actions/checkout@v4
 

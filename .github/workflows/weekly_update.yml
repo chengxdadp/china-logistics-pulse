@@ -1,0 +1,30 @@
+name: Weekly Update
+
+on:
+  schedule:
+    - cron: '0 2 * * 3'  # 每周三 UTC 02:00（北京时间 10:00）
+  workflow_dispatch:       # 支持手动触发
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run update
+        run: python scripts/update.py --sleep 2
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ charts/ README.md
+          git diff --cached --quiet || git commit -m "Weekly data update $(date +%Y-%m-%d)"
+          git push
